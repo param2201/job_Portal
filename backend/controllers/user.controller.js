@@ -7,14 +7,14 @@ export const register = async(req,res) => {
         const {fullname, email, phoneNumber, password, role} = req.body;
         if(!fullname || !email || !phoneNumber || !password || !role){
             return res.status(400).json({
-                message:'Something is missing',
+                message:"Something is missing",
                 success:false
             });
         };
         const user = await User.findOne({email});
         if(user){
             return res.status(400).json({
-                message:'User already exist with this email',
+                message:"User already exist with this email",
                 success:false
             });
         }
@@ -29,11 +29,10 @@ export const register = async(req,res) => {
         });
 
         return res.status(201).json({
-            message:'Account created successfully',
+            message:"Account created successfully",
             success:true
         });
-    }
-    catch (error){
+    } catch (error){
         console.log(error);
     }
 }
@@ -43,7 +42,7 @@ export const login = async (req,res) => {
         const {email,password,role} = req.body;
         if(!email || !password || !role){
             return res.status(400).json({
-                message:'Something is missing',
+                message:"Something is missing",
                 success:false
             });
         };
@@ -51,15 +50,15 @@ export const login = async (req,res) => {
         let user = await User.findOne({email});
         if(!user){
             return res.status(400).json({
-                message:'email or password is incorrect',
+                message:"email or password is incorrect",
                 success:false,
-            });
+            })
         }
         //check password
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch){
             return res.status(400).json({
-                message:'email or password is incorrect',
+                message:"email or password is incorrect",
                 success:false
             })
         };
@@ -67,7 +66,7 @@ export const login = async (req,res) => {
         //check role
         if(role != user.role){
             return res.status(400).json({
-                message:'Account does not exist with current role',
+                message:"Account does not exist with current role",
                 success:false
             })
         };
@@ -87,7 +86,7 @@ export const login = async (req,res) => {
         }
 
         return res.status(200).cookie("token", token, {maxAge:1*24*60*60*1000, httpsOnly:true, sameSite:'strict'}).json({
-            message:'Welcome back ${user.fullname}',
+            message:"Welcome back ${user.fullname}",
             user,
             success:true
         })
@@ -96,3 +95,14 @@ export const login = async (req,res) => {
         console.log(error);
     }
 }
+
+export const logout = async (req,res) => {
+    try {
+        return res.status(200).cookie("token","",{maxAge:0}).json({
+            message:"Logged out succcessfully",
+            success:true
+        })
+    } catch (error) {
+        console.log(error);
+    }
+} 
