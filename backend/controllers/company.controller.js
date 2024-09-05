@@ -9,7 +9,7 @@ export const registerCompany = async(req,res) => {
                 success:false
             });
         } 
-        let comapny = await Company.findOne({name:companyName});
+        let company = await Company.findOne({name:companyName});
         if(company){
             return res.status(400).json({
                 message:"You can't register same company",
@@ -23,7 +23,7 @@ export const registerCompany = async(req,res) => {
 
         return res.status(201).json({
             message:"Company registered successfully",
-            comapny,
+            company,
             success:true
         })
     } catch (error) {
@@ -35,12 +35,16 @@ export const getCompany = async(req,res) => {
     try {
         const userId = req.id; //logged in
         const companies = await Company.find({userId});
-        if(!comapny){
+        if(!companies){
             return res.status(404).json({
                 message:"Companies not found.",
                 success:false
             })
         }
+        return res.status(200).json({
+            companies,
+            success : true  
+        })
     } catch (error) {
         console.log(error);
     }
@@ -48,14 +52,18 @@ export const getCompany = async(req,res) => {
 //get company by id
 export const getCompanyById = async (req,res) => {
     try {
-        const comapnyId = req.params.id;
+        const companyId = req.params.id;
         const company = await Company.findById(companyId);
         if(!company){
-            return res.status(200).json({
-                company,
+            return res.status(404).json({
+                message : "Company not found",
                 success:true
             })
         }
+        return res.status(200).json({
+            company,
+            success:true
+        })
     } catch (error) {
         console.log(error);
     }
